@@ -1,0 +1,209 @@
+// ─── Duolingo-inspired global theme ─────────────────────────────────────────
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
+:root {
+  --green: #58cc02;
+  --green-dark: #58a700;
+  --green-light: #d7ffb8;
+  --yellow: #ffd900;
+  --yellow-dark: #ce9f00;
+  --blue: #1cb0f6;
+  --blue-dark: #0e8fc7;
+  --red: #ff4b4b;
+  --red-dark: #cc0000;
+  --surface: #ffffff;
+  --bg: #f0f4f9;
+  --sidebar-bg: #ffffff;
+  --border: #e5e5e5;
+  --text: #3c3c3c;
+  --text-muted: #afafaf;
+  --radius-sm: 8px;
+  --radius: 12px;
+  --radius-lg: 16px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  font-family: 'Nunito', system-ui, sans-serif;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+// ─── Button system ────────────────────────────────────────────────────────────
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 80ms ease, box-shadow 80ms ease, background 120ms ease;
+  user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:active:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: none !important;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: var(--green);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--green-dark);
+
+  &:hover:not(:disabled) {
+    background: #4db800;
+  }
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--text);
+  border: 2px solid var(--border);
+  box-shadow: 0 3px 0 var(--border);
+
+  &:hover:not(:disabled) {
+    background: var(--bg);
+  }
+}
+
+.btn-yellow {
+  background: var(--yellow);
+  color: var(--text);
+  box-shadow: 0 4px 0 var(--yellow-dark);
+
+  &:hover:not(:disabled) {
+    background: #f5cd00;
+  }
+}
+
+.btn-blue {
+  background: var(--blue);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--blue-dark);
+
+  &:hover:not(:disabled) {
+    background: #0ea8ee;
+  }
+}
+
+.btn-danger {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 3px 0 var(--red-dark);
+
+  &:hover:not(:disabled) {
+    background: #e84040;
+  }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-muted);
+  box-shadow: none;
+  padding: 6px 10px;
+  font-size: 13px;
+
+  &:hover:not(:disabled) {
+    color: var(--text);
+    background: var(--bg);
+  }
+}
+
+.btn-sm {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.btn-icon {
+  padding: 6px;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  font-size: 16px;
+}
+
+// ─── Card ────────────────────────────────────────────────────────────────────
+
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border);
+  padding: 20px;
+}
+
+// ─── Input / Textarea ────────────────────────────────────────────────────────
+
+input[type='text'],
+input[type='email'],
+textarea {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text);
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 150ms ease;
+  width: 100%;
+
+  &:focus {
+    border-color: var(--blue);
+  }
+
+  &::placeholder {
+    color: var(--text-muted);
+  }
+}
+
+// ─── Utility ─────────────────────────────────────────────────────────────────
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 700;
+  background: var(--green-light);
+  color: var(--green-dark);
+}
+
+.text-muted {
+  color: var(--text-muted);
+  font-size: 13px;
+}
