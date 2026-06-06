@@ -23,7 +23,8 @@ import { Entry } from '../models';
       </div>
 
       <div class="table-wrap">
-        <table class="entry-table" aria-label="Word and clue list">
+        <!-- Desktop table -->
+        <table class="entry-table desktop-only" aria-label="Word and clue list">
           <thead>
             <tr>
               <th class="col-num">#</th>
@@ -38,9 +39,7 @@ import { Entry } from '../models';
               class="entry-row"
               [class.invalid]="!isValid(entry)"
             >
-              <td class="col-num">
-                <span class="row-num">{{ i + 1 }}</span>
-              </td>
+              <td class="col-num"><span class="row-num">{{ i + 1 }}</span></td>
               <td class="col-word">
                 <input
                   type="text"
@@ -65,7 +64,7 @@ import { Entry } from '../models';
               <td class="col-del">
                 <button
                   class="btn btn-ghost btn-icon"
-                  title="Remove row"
+                  title="Remove"
                   (click)="removeEntry(ws.id, entry.id)"
                   [disabled]="ws.entries.length <= 1"
                   aria-label="Remove row"
@@ -74,6 +73,40 @@ import { Entry } from '../models';
             </tr>
           </tbody>
         </table>
+
+        <!-- Mobile cards -->
+        <div class="mobile-cards mobile-only">
+          <div
+            *ngFor="let entry of ws.entries; let i = index; trackBy: trackById"
+            class="mobile-card"
+            [class.invalid]="!isValid(entry)"
+          >
+            <div class="mobile-card-header">
+              <span class="row-num">{{ i + 1 }}</span>
+              <button
+                class="btn btn-ghost btn-icon"
+                (click)="removeEntry(ws.id, entry.id)"
+                [disabled]="ws.entries.length <= 1"
+                aria-label="Remove"
+              >✕</button>
+            </div>
+            <input
+              type="text"
+              [ngModel]="entry.word"
+              (ngModelChange)="updateEntry(ws.id, entry, 'word', $event)"
+              placeholder="Word…"
+              autocomplete="off"
+              autocorrect="off"
+              spellcheck="false"
+            />
+            <input
+              type="text"
+              [ngModel]="entry.clue"
+              (ngModelChange)="updateEntry(ws.id, entry, 'clue', $event)"
+              placeholder="Clue or definition…"
+            />
+          </div>
+        </div>
       </div>
 
       <div class="editor-footer">
@@ -81,7 +114,7 @@ import { Entry } from '../models';
           + Add Word
         </button>
         <span class="text-muted" *ngIf="validEntries().length < 2">
-          Add at least 2 complete words to generate activities.
+          Add at least 2 complete words to generate.
         </span>
       </div>
     </div>
@@ -90,7 +123,7 @@ import { Entry } from '../models';
       <div class="no-set-placeholder">
         <div class="placeholder-icon">📚</div>
         <h2>No word set selected</h2>
-        <p>Choose a word set from the sidebar, or create a new one to get started.</p>
+        <p>Open the menu and choose a word set, or create a new one to get started.</p>
       </div>
     </ng-template>
   `,
@@ -103,15 +136,12 @@ import { Entry } from '../models';
     }
 
     .editor-header {
-      padding: 24px 28px 16px;
+      padding: 20px 24px 14px;
       border-bottom: 2px solid var(--border);
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
     }
 
     .set-title {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 900;
       color: var(--text);
     }
@@ -137,9 +167,10 @@ import { Entry } from '../models';
     .table-wrap {
       flex: 1;
       overflow-y: auto;
-      padding: 16px 28px;
+      padding: 16px 24px;
     }
 
+    /* ── Desktop table ─────────────────────────────── */
     .entry-table {
       width: 100%;
       border-collapse: separate;
@@ -155,30 +186,58 @@ import { Entry } from '../models';
         padding: 0 8px 4px;
       }
 
-      .col-num { width: 36px; }
+      .col-num  { width: 36px; }
       .col-word { width: 160px; }
-      .col-clue { }
-      .col-del { width: 40px; }
+      .col-del  { width: 40px; }
     }
 
-    .entry-row {
-      td {
-        padding: 4px 4px;
-        vertical-align: middle;
+    .entry-row td {
+      padding: 4px 4px;
+      vertical-align: middle;
 
-        input {
-          border-radius: 8px;
-          padding: 8px 10px;
-          font-size: 14px;
-          font-weight: 600;
-        }
+      input {
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 14px;
+        font-weight: 600;
       }
+    }
 
-      &.invalid td input:first-child {
+    /* ── Mobile cards ──────────────────────────────── */
+    .mobile-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .mobile-card {
+      background: #fff;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 12px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      &.invalid {
         border-color: #ffcdd2;
       }
+
+      input {
+        font-size: 15px;
+        font-weight: 600;
+        padding: 10px 12px;
+        border-radius: 8px;
+      }
     }
 
+    .mobile-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ── Shared ────────────────────────────────────── */
     .row-num {
       display: flex;
       align-items: center;
@@ -193,13 +252,29 @@ import { Entry } from '../models';
     }
 
     .editor-footer {
-      padding: 16px 28px;
+      padding: 14px 24px;
       border-top: 2px solid var(--border);
       display: flex;
       align-items: center;
       gap: 16px;
+      flex-wrap: wrap;
     }
 
+    /* ── Responsive visibility ─────────────────────── */
+    .desktop-only { display: table; }
+    .mobile-only  { display: none; }
+
+    @media (max-width: 768px) {
+      .desktop-only { display: none; }
+      .mobile-only  { display: flex; }
+
+      .editor-header { padding: 14px 16px 10px; }
+      .table-wrap    { padding: 12px 16px; }
+      .editor-footer { padding: 12px 16px; }
+      .set-title     { font-size: 17px; }
+    }
+
+    /* ── No-set placeholder ────────────────────────── */
     .no-set-placeholder {
       display: flex;
       flex-direction: column;
@@ -208,22 +283,20 @@ import { Entry } from '../models';
       height: 100%;
       text-align: center;
       color: var(--text-muted);
-      padding: 40px;
+      padding: 40px 24px;
       gap: 12px;
 
-      .placeholder-icon {
-        font-size: 64px;
-      }
+      .placeholder-icon { font-size: 56px; }
 
       h2 {
-        font-size: 20px;
+        font-size: 18px;
         font-weight: 800;
         color: var(--text);
       }
 
       p {
         font-size: 14px;
-        max-width: 340px;
+        max-width: 300px;
         line-height: 1.6;
       }
     }

@@ -51,6 +51,10 @@ import { PdfPreviewService } from '../services/pdf-preview.service';
       flex-direction: column;
       box-shadow: -8px 0 40px rgba(0, 0, 0, 0.3);
       animation: slideIn 220ms cubic-bezier(0.4, 0, 0.2, 1);
+
+      @media (max-width: 768px) {
+        width: 100vw;
+      }
     }
 
     @keyframes slideIn {

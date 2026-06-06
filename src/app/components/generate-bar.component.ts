@@ -70,7 +70,7 @@ type GeneratingKey = 'crossword' | 'matching' | 'flashcards' | null;
   `,
   styles: [`
     .generate-bar {
-      padding: 16px 28px;
+      padding: 14px 24px;
       background: #fff;
       border-top: 2px solid var(--border);
     }
@@ -78,7 +78,7 @@ type GeneratingKey = 'crossword' | 'matching' | 'flashcards' | null;
     .generate-bar-inner {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       flex-wrap: wrap;
     }
 
@@ -128,6 +128,28 @@ type GeneratingKey = 'crossword' | 'matching' | 'flashcards' | null;
       font-size: 12px;
       color: var(--text-muted);
       font-style: italic;
+    }
+
+    @media (max-width: 768px) {
+      .generate-bar {
+        padding: 12px 16px;
+      }
+
+      .generate-label {
+        display: none;
+      }
+
+      .generate-buttons {
+        width: 100%;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .generate-btn {
+        width: 100%;
+        justify-content: center;
+        padding: 12px 16px;
+      }
     }
 
     .spinner {

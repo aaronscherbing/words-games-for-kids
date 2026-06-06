@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild, inject } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { WordSetStore } from '../services/word-set-store.service';
@@ -15,6 +15,7 @@ import { WordSet } from '../models';
           <span class="logo-icon">🎯</span>
           <span class="logo-text">Word Games<br /><small>for Kids</small></span>
         </div>
+        <button class="close-drawer btn btn-ghost btn-icon" (click)="closeDrawer.emit()" aria-label="Close menu">✕</button>
       </div>
 
       <div class="sidebar-actions">
@@ -28,7 +29,7 @@ import { WordSet } from '../models';
           *ngFor="let ws of store.sets()"
           class="set-item"
           [class.active]="ws.id === store.activeSetId()"
-          (click)="store.selectSet(ws.id)"
+          (click)="store.selectSet(ws.id); closeDrawer.emit()"
         >
           <div class="set-item-body">
             <ng-container *ngIf="renamingId !== ws.id; else renameField">
@@ -103,8 +104,16 @@ import { WordSet } from '../models';
     }
 
     .sidebar-header {
-      padding: 20px 16px 12px;
+      padding: 16px 12px 12px 16px;
       border-bottom: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .close-drawer {
+      display: none;
+      @media (max-width: 768px) { display: flex; }
     }
 
     .logo {
@@ -219,6 +228,8 @@ import { WordSet } from '../models';
   `],
 })
 export class WordSetListComponent {
+  @Output() closeDrawer = new EventEmitter<void>();
+
   store = inject(WordSetStore);
 
   renamingId: string | null = null;
