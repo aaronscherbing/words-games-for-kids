@@ -1,20 +1,21 @@
-import { Component, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { WordSetListComponent } from './components/word-set-list.component';
 import { EntryEditorComponent } from './components/entry-editor.component';
 import { GenerateBarComponent } from './components/generate-bar.component';
 import { PdfPreviewComponent } from './components/pdf-preview.component';
+import { IconComponent } from './components/icon.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule,
     WordSetListComponent,
     EntryEditorComponent,
     GenerateBarComponent,
     PdfPreviewComponent,
-  ],
+    IconComponent
+],
   template: `
     <div class="app-shell">
 
@@ -24,7 +25,7 @@ import { PdfPreviewComponent } from './components/pdf-preview.component';
           <span></span><span></span><span></span>
         </button>
         <div class="mobile-logo">
-          <span>🎯</span>
+          <span class="mobile-logo-icon"><app-icon name="target" [size]="22" /></span>
           <span class="mobile-logo-text">Word Games for Kids</span>
         </div>
       </header>
@@ -52,6 +53,7 @@ import { PdfPreviewComponent } from './components/pdf-preview.component';
 
     <app-pdf-preview />
   `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .app-shell {
       display: flex;

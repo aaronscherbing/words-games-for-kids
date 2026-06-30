@@ -1,73 +1,81 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, inject, signal, ChangeDetectionStrategy } from '@angular/core';
+
 import { WordSetStore } from '../services/word-set-store.service';
 import { PdfService } from '../services/pdf.service';
 import { PdfPreviewService } from '../services/pdf-preview.service';
+import { IconComponent } from './icon.component';
 
 type GeneratingKey = 'crossword' | 'matching' | 'flashcards' | null;
 
 @Component({
   selector: 'app-generate-bar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [IconComponent],
   template: `
-    <div class="generate-bar" *ngIf="store.activeSet()">
-      <div class="generate-bar-inner">
-        <div class="generate-label">
-          <span class="generate-label-icon">✨</span>
-          Generate
+    @if (store.activeSet()) {
+      <div class="generate-bar">
+        <div class="generate-bar-inner">
+          <div class="generate-label">
+            <span class="generate-label-icon"><app-icon name="sparkles" [size]="16" /></span>
+            Generate
+          </div>
+          <div class="generate-buttons">
+            <button
+              class="btn btn-primary generate-btn"
+              [disabled]="!canGenerate() || generating() !== null"
+              (click)="genCrossword()"
+              title="Preview crossword puzzle PDF"
+              >
+              <span class="btn-emoji"><app-icon name="crossword" [size]="22" /></span>
+              <span>
+                Crossword
+                <small>+ answer key</small>
+              </span>
+              @if (generating() === 'crossword') {
+                <span class="spinner"></span>
+              }
+            </button>
+            <button
+              class="btn btn-yellow generate-btn"
+              [disabled]="!canGenerate() || generating() !== null"
+              (click)="genMatching()"
+              title="Preview matching activity PDF"
+              >
+              <span class="btn-emoji"><app-icon name="matching" [size]="22" /></span>
+              <span>
+                Matching
+                <small>+ answer key</small>
+              </span>
+              @if (generating() === 'matching') {
+                <span class="spinner"></span>
+              }
+            </button>
+            <button
+              class="btn btn-blue generate-btn"
+              [disabled]="!canGenerate() || generating() !== null"
+              (click)="genFlashCards()"
+              title="Preview flash cards PDF"
+              >
+              <span class="btn-emoji"><app-icon name="flashcards" [size]="22" /></span>
+              <span>
+                Flash Cards
+                <small>duplex-ready</small>
+              </span>
+              @if (generating() === 'flashcards') {
+                <span class="spinner"></span>
+              }
+            </button>
+          </div>
+          @if (!canGenerate()) {
+            <p class="generate-hint">
+              Add at least 2 complete word + clue pairs to unlock PDF generation.
+            </p>
+          }
         </div>
-
-        <div class="generate-buttons">
-          <button
-            class="btn btn-primary generate-btn"
-            [disabled]="!canGenerate() || generating() !== null"
-            (click)="genCrossword()"
-            title="Preview crossword puzzle PDF"
-          >
-            <span class="btn-emoji">🔤</span>
-            <span>
-              Crossword
-              <small>+ answer key</small>
-            </span>
-            <span *ngIf="generating() === 'crossword'" class="spinner"></span>
-          </button>
-
-          <button
-            class="btn btn-yellow generate-btn"
-            [disabled]="!canGenerate() || generating() !== null"
-            (click)="genMatching()"
-            title="Preview matching activity PDF"
-          >
-            <span class="btn-emoji">↔️</span>
-            <span>
-              Matching
-              <small>+ answer key</small>
-            </span>
-            <span *ngIf="generating() === 'matching'" class="spinner"></span>
-          </button>
-
-          <button
-            class="btn btn-blue generate-btn"
-            [disabled]="!canGenerate() || generating() !== null"
-            (click)="genFlashCards()"
-            title="Preview flash cards PDF"
-          >
-            <span class="btn-emoji">🃏</span>
-            <span>
-              Flash Cards
-              <small>duplex-ready</small>
-            </span>
-            <span *ngIf="generating() === 'flashcards'" class="spinner"></span>
-          </button>
-        </div>
-
-        <p class="generate-hint" *ngIf="!canGenerate()">
-          Add at least 2 complete word + clue pairs to unlock PDF generation.
-        </p>
       </div>
-    </div>
-  `,
+    }
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .generate-bar {
       padding: 14px 24px;

@@ -1,79 +1,87 @@
-import { Component, ElementRef, EventEmitter, Output, ViewChild, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Output, ViewChild, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { WordSetStore } from '../services/word-set-store.service';
 import { WordSet } from '../models';
+import { IconComponent } from './icon.component';
 
 @Component({
   selector: 'app-word-set-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, IconComponent],
   template: `
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo">
-          <span class="logo-icon">🎯</span>
+          <span class="logo-icon"><app-icon name="target" [size]="30" /></span>
           <span class="logo-text">Word Games<br /><small>for Kids</small></span>
         </div>
-        <button class="close-drawer btn btn-ghost btn-icon" (click)="closeDrawer.emit()" aria-label="Close menu">✕</button>
+        <button class="close-drawer btn btn-ghost btn-icon" (click)="closeDrawer.emit()" aria-label="Close menu"><app-icon name="close" [size]="18" /></button>
       </div>
-
+    
       <div class="sidebar-actions">
         <button class="btn btn-primary btn-sm" style="width:100%" (click)="createSet()">
           + New Word Set
         </button>
       </div>
-
+    
       <nav class="set-list" aria-label="Word sets">
-        <div
-          *ngFor="let ws of store.sets()"
-          class="set-item"
-          [class.active]="ws.id === store.activeSetId()"
-          (click)="store.selectSet(ws.id); closeDrawer.emit()"
-        >
-          <div class="set-item-body">
-            <ng-container *ngIf="renamingId !== ws.id; else renameField">
-              <span class="set-name">{{ ws.name }}</span>
-              <span class="set-count tag">{{ validCount(ws) }}</span>
-            </ng-container>
-            <ng-template #renameField>
-              <input
-                #renameInput
-                type="text"
-                [(ngModel)]="renameValue"
-                (keydown.enter)="commitRename(ws.id)"
-                (keydown.escape)="cancelRename()"
-                (blur)="commitRename(ws.id)"
-                (click)="$event.stopPropagation()"
-                class="rename-input"
-              />
-            </ng-template>
+        @for (ws of store.sets(); track ws) {
+          <div
+            class="set-item"
+            [class.active]="ws.id === store.activeSetId()"
+            (click)="store.selectSet(ws.id); closeDrawer.emit()"
+            >
+            <div class="set-item-body">
+              @if (renamingId !== ws.id) {
+                <span class="set-name">{{ ws.name }}</span>
+              } @else {
+                <input
+                  #renameInput
+                  type="text"
+                  [(ngModel)]="renameValue"
+                  (keydown.enter)="commitRename(ws.id)"
+                  (keydown.escape)="cancelRename()"
+                  (blur)="commitRename(ws.id)"
+                  (click)="$event.stopPropagation()"
+                  class="rename-input"
+                  />
+              }
+            </div>
+            <div class="set-item-row2">
+              <span class="set-count tag">{{ validCount(ws) }} {{ validCount(ws) === 1 ? 'word' : 'words' }}</span>
+              <div class="set-item-actions" (click)="$event.stopPropagation()">
+                <button
+                  class="btn btn-ghost btn-icon"
+                  title="Rename"
+                  aria-label="Rename"
+                  (click)="startRename(ws)"
+                ><app-icon name="pencil" /></button>
+                <button
+                  class="btn btn-ghost btn-icon"
+                  title="Export this set"
+                  aria-label="Export this set"
+                  (click)="store.exportSet(ws.id)"
+                ><app-icon name="download" /></button>
+                <button
+                  class="btn btn-ghost btn-icon"
+                  title="Delete"
+                  aria-label="Delete"
+                  (click)="deleteSet(ws)"
+                ><app-icon name="trash" /></button>
+              </div>
+            </div>
           </div>
-          <div class="set-item-actions" (click)="$event.stopPropagation()">
-            <button
-              class="btn btn-ghost btn-icon"
-              title="Rename"
-              (click)="startRename(ws)"
-            >✏️</button>
-            <button
-              class="btn btn-ghost btn-icon"
-              title="Export this set"
-              (click)="store.exportSet(ws.id)"
-            >⬇️</button>
-            <button
-              class="btn btn-ghost btn-icon"
-              title="Delete"
-              (click)="deleteSet(ws)"
-            >🗑️</button>
+        }
+    
+        @if (store.sets().length === 0) {
+          <div class="empty-sets">
+            <p>No word sets yet.</p>
+            <p>Click <strong>+ New Word Set</strong> to get started!</p>
           </div>
-        </div>
-
-        <div *ngIf="store.sets().length === 0" class="empty-sets">
-          <p>No word sets yet.</p>
-          <p>Click <strong>+ New Word Set</strong> to get started!</p>
-        </div>
+        }
       </nav>
-
+    
       <div class="sidebar-footer">
         <button class="btn btn-secondary btn-sm" (click)="exportAll()" title="Export all sets">
           Export All
@@ -87,10 +95,11 @@ import { WordSet } from '../models';
           accept=".json"
           class="visually-hidden"
           (change)="onFileSelected($event)"
-        />
+          />
       </div>
     </aside>
-  `,
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .sidebar {
       display: flex;
@@ -123,7 +132,8 @@ import { WordSet } from '../models';
     }
 
     .logo-icon {
-      font-size: 32px;
+      display: inline-flex;
+      color: var(--green);
     }
 
     .logo-text {
@@ -152,8 +162,8 @@ import { WordSet } from '../models';
 
     .set-item {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      align-items: stretch;
       gap: 6px;
       padding: 10px 10px;
       border-radius: var(--radius);
@@ -191,17 +201,31 @@ import { WordSet } from '../models';
       white-space: nowrap;
     }
 
+    .set-item-row2 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      min-height: 32px;
+    }
+
     .set-count {
       flex-shrink: 0;
+      margin-left: -10px;
     }
 
     .set-item-actions {
       display: flex;
+      justify-content: flex-end;
       gap: 2px;
       opacity: 0;
       transition: opacity 120ms ease;
       .set-item:hover & { opacity: 1; }
       .set-item.active & { opacity: 1; }
+
+      .btn-ghost:hover:not(:disabled) {
+        background: rgba(88, 167, 0, 0.18);
+      }
     }
 
     .rename-input {

@@ -8,6 +8,7 @@ const DARK_GREEN = '#58a700';
 const YELLOW = '#ffd900';
 const DARK = '#3c3c3c';
 const GRAY = '#afafaf';
+const SPACE_FILL = '#d9d9d9';
 
 @Injectable({ providedIn: 'root' })
 export class PdfService {
@@ -67,6 +68,16 @@ export class PdfService {
         const y = gridY + r * cellSize;
 
         if (cell) {
+          // A space within a multi-word answer: render as a shaded gap so it's
+          // clearly not a cell to fill in, while keeping the word connected.
+          if (cell.letter === ' ') {
+            doc.setFillColor(SPACE_FILL);
+            doc.setDrawColor(DARK);
+            doc.setLineWidth(0.8);
+            doc.rect(x, y, cellSize, cellSize, 'FD');
+            continue;
+          }
+
           doc.setFillColor('#ffffff');
           doc.setDrawColor(DARK);
           doc.setLineWidth(0.8);

@@ -1,132 +1,138 @@
-import { Component, computed, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { FormsModule } from '@angular/forms';
 import { WordSetStore } from '../services/word-set-store.service';
 import { Entry } from '../models';
+import { IconComponent } from './icon.component';
 
 @Component({
   selector: 'app-entry-editor',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, IconComponent],
   template: `
-    <div class="editor-wrap" *ngIf="store.activeSet() as ws; else noSet">
-      <div class="editor-header">
-        <div>
-          <h2 class="set-title">{{ ws.name }}</h2>
-          <p class="set-meta">
-            {{ validEntries().length }} valid word{{ validEntries().length !== 1 ? 's' : '' }}
-            <span *ngIf="invalidCount() > 0" class="warn-badge">
-              {{ invalidCount() }} incomplete
-            </span>
-          </p>
+    @if (store.activeSet(); as ws) {
+      <div class="editor-wrap">
+        <div class="editor-header">
+          <div>
+            <h2 class="set-title">{{ ws.name }}</h2>
+            <p class="set-meta">
+              {{ validEntries().length }} valid word{{ validEntries().length !== 1 ? 's' : '' }}
+              @if (invalidCount() > 0) {
+                <span class="warn-badge">
+                  {{ invalidCount() }} incomplete
+                </span>
+              }
+            </p>
+          </div>
         </div>
-      </div>
-
-      <div class="table-wrap">
-        <!-- Desktop table -->
-        <table class="entry-table desktop-only" aria-label="Word and clue list">
-          <thead>
-            <tr>
-              <th class="col-num">#</th>
-              <th class="col-word">Word</th>
-              <th class="col-clue">Clue / Definition</th>
-              <th class="col-del"></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              *ngFor="let entry of ws.entries; let i = index; trackBy: trackById"
-              class="entry-row"
-              [class.invalid]="!isValid(entry)"
-            >
-              <td class="col-num"><span class="row-num">{{ i + 1 }}</span></td>
-              <td class="col-word">
+        <div class="table-wrap">
+          <!-- Desktop table -->
+          <table class="entry-table desktop-only" aria-label="Word and clue list">
+            <thead>
+              <tr>
+                <th class="col-num">#</th>
+                <th class="col-word">Word</th>
+                <th class="col-clue">Clue / Definition</th>
+                <th class="col-del"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (entry of ws.entries; track trackById(i, entry); let i = $index) {
+                <tr
+                  class="entry-row"
+                  [class.invalid]="!isValid(entry)"
+                  >
+                  <td class="col-num"><span class="row-num">{{ i + 1 }}</span></td>
+                  <td class="col-word">
+                    <input
+                      type="text"
+                      [ngModel]="entry.word"
+                      (ngModelChange)="updateEntry(ws.id, entry, 'word', $event)"
+                      placeholder="word"
+                      autocomplete="off"
+                      autocorrect="off"
+                      spellcheck="false"
+                      [attr.aria-label]="'Word ' + (i + 1)"
+                      />
+                  </td>
+                  <td class="col-clue">
+                    <input
+                      type="text"
+                      [ngModel]="entry.clue"
+                      (ngModelChange)="updateEntry(ws.id, entry, 'clue', $event)"
+                      placeholder="clue or definition…"
+                      [attr.aria-label]="'Clue ' + (i + 1)"
+                      />
+                  </td>
+                  <td class="col-del">
+                    <button
+                      class="btn btn-ghost btn-icon"
+                      title="Remove"
+                      (click)="removeEntry(ws.id, entry.id)"
+                      [disabled]="ws.entries.length <= 1"
+                      aria-label="Remove row"
+                    ><app-icon name="close" [size]="18" /></button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <!-- Mobile cards -->
+          <div class="mobile-cards mobile-only">
+            @for (entry of ws.entries; track trackById(i, entry); let i = $index) {
+              <div
+                class="mobile-card"
+                [class.invalid]="!isValid(entry)"
+                >
+                <div class="mobile-card-header">
+                  <span class="row-num">{{ i + 1 }}</span>
+                  <button
+                    class="btn btn-ghost btn-icon"
+                    (click)="removeEntry(ws.id, entry.id)"
+                    [disabled]="ws.entries.length <= 1"
+                    aria-label="Remove"
+                  ><app-icon name="close" [size]="18" /></button>
+                </div>
                 <input
                   type="text"
                   [ngModel]="entry.word"
                   (ngModelChange)="updateEntry(ws.id, entry, 'word', $event)"
-                  placeholder="word"
+                  placeholder="Word…"
                   autocomplete="off"
                   autocorrect="off"
                   spellcheck="false"
-                  [attr.aria-label]="'Word ' + (i + 1)"
-                />
-              </td>
-              <td class="col-clue">
+                  />
                 <input
                   type="text"
                   [ngModel]="entry.clue"
                   (ngModelChange)="updateEntry(ws.id, entry, 'clue', $event)"
-                  placeholder="clue or definition…"
-                  [attr.aria-label]="'Clue ' + (i + 1)"
-                />
-              </td>
-              <td class="col-del">
-                <button
-                  class="btn btn-ghost btn-icon"
-                  title="Remove"
-                  (click)="removeEntry(ws.id, entry.id)"
-                  [disabled]="ws.entries.length <= 1"
-                  aria-label="Remove row"
-                >✕</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Mobile cards -->
-        <div class="mobile-cards mobile-only">
-          <div
-            *ngFor="let entry of ws.entries; let i = index; trackBy: trackById"
-            class="mobile-card"
-            [class.invalid]="!isValid(entry)"
-          >
-            <div class="mobile-card-header">
-              <span class="row-num">{{ i + 1 }}</span>
-              <button
-                class="btn btn-ghost btn-icon"
-                (click)="removeEntry(ws.id, entry.id)"
-                [disabled]="ws.entries.length <= 1"
-                aria-label="Remove"
-              >✕</button>
-            </div>
-            <input
-              type="text"
-              [ngModel]="entry.word"
-              (ngModelChange)="updateEntry(ws.id, entry, 'word', $event)"
-              placeholder="Word…"
-              autocomplete="off"
-              autocorrect="off"
-              spellcheck="false"
-            />
-            <input
-              type="text"
-              [ngModel]="entry.clue"
-              (ngModelChange)="updateEntry(ws.id, entry, 'clue', $event)"
-              placeholder="Clue or definition…"
-            />
+                  placeholder="Clue or definition…"
+                  />
+              </div>
+            }
           </div>
         </div>
+        <div class="editor-footer">
+          <button class="btn btn-secondary btn-sm" (click)="addEntry(ws.id)">
+            + Add Word
+          </button>
+          @if (validEntries().length < 2) {
+            <span class="text-muted">
+              Add at least 2 complete words to generate.
+            </span>
+          }
+        </div>
       </div>
-
-      <div class="editor-footer">
-        <button class="btn btn-secondary btn-sm" (click)="addEntry(ws.id)">
-          + Add Word
-        </button>
-        <span class="text-muted" *ngIf="validEntries().length < 2">
-          Add at least 2 complete words to generate.
-        </span>
-      </div>
-    </div>
-
-    <ng-template #noSet>
+    } @else {
       <div class="no-set-placeholder">
-        <div class="placeholder-icon">📚</div>
+        <div class="placeholder-icon"><app-icon name="books" [size]="56" /></div>
         <h2>No word set selected</h2>
         <p>Open the menu and choose a word set, or create a new one to get started.</p>
       </div>
-    </ng-template>
-  `,
+    }
+    
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .editor-wrap {
       display: flex;

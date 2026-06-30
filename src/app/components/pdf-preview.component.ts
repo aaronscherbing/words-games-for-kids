@@ -1,36 +1,40 @@
-import { Component, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+
 import { DomSanitizer } from '@angular/platform-browser';
 import { PdfPreviewService } from '../services/pdf-preview.service';
+import { IconComponent } from './icon.component';
 
 @Component({
   selector: 'app-pdf-preview',
   standalone: true,
-  imports: [CommonModule],
+  imports: [IconComponent],
   template: `
-    <div class="preview-backdrop" *ngIf="preview.preview() as p" (click)="onBackdropClick($event)">
-      <div class="preview-panel" role="dialog" aria-modal="true">
-        <div class="preview-header">
-          <h2 class="preview-title">{{ p.title }}</h2>
-          <div class="preview-actions">
-            <button class="btn btn-primary btn-sm" (click)="download()">
-              ⬇ Download
-            </button>
-            <button class="btn btn-secondary btn-sm" (click)="close()" aria-label="Close preview">
-              ✕ Close
-            </button>
+    @if (preview.preview(); as p) {
+      <div class="preview-backdrop" (click)="onBackdropClick($event)">
+        <div class="preview-panel" role="dialog" aria-modal="true">
+          <div class="preview-header">
+            <h2 class="preview-title">{{ p.title }}</h2>
+            <div class="preview-actions">
+              <button class="btn btn-primary btn-sm btn-with-icon" (click)="download()">
+                <app-icon name="download" [size]="16" /> Download
+              </button>
+              <button class="btn btn-secondary btn-sm btn-with-icon" (click)="close()" aria-label="Close preview">
+                <app-icon name="close" [size]="16" /> Close
+              </button>
+            </div>
+          </div>
+          <div class="preview-body">
+            <iframe
+              [src]="safeUrl(p.url)"
+              class="pdf-frame"
+              title="PDF preview"
+            ></iframe>
           </div>
         </div>
-        <div class="preview-body">
-          <iframe
-            [src]="safeUrl(p.url)"
-            class="pdf-frame"
-            title="PDF preview"
-          ></iframe>
-        </div>
       </div>
-    </div>
-  `,
+    }
+    `,
+  changeDetection: ChangeDetectionStrategy.Eager,
   styles: [`
     .preview-backdrop {
       position: fixed;
@@ -87,6 +91,12 @@ import { PdfPreviewService } from '../services/pdf-preview.service';
       display: flex;
       gap: 8px;
       flex-shrink: 0;
+    }
+
+    .btn-with-icon {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .preview-body {

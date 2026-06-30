@@ -29,15 +29,19 @@ interface Placement {
   dir: 'across' | 'down';
 }
 
-// Matches A-Z plus Spanish accented vowels and Ñ (uppercase after normalization)
-const LETTER_RE = /[^A-ZÁÉÍÓÚÜÑ]/g;
+// Matches anything that is NOT an allowed character: A-Z, Spanish accented
+// vowels, Ñ, or a space (uppercase after normalization). Spaces are kept so
+// multi-word answers like "LA NIÑA" are preserved in the grid.
+const LETTER_RE = /[^A-ZÁÉÍÓÚÜÑ ]/g;
 
 @Injectable({ providedIn: 'root' })
 export class CrosswordGeneratorService {
   generate(entries: Entry[]): CrosswordResult {
     const valid = entries
       .map((e) => ({
-        word: e.word.toUpperCase().replace(LETTER_RE, ''),
+        // Strip disallowed characters, collapse repeated spaces, and trim so a
+        // word like " la  niña " becomes "LA NIÑA" (no leading/trailing/double spaces).
+        word: e.word.toUpperCase().replace(LETTER_RE, '').replace(/ +/g, ' ').trim(),
         clue: e.clue,
       }))
       .filter((e) => e.word.length >= 2 && e.clue.trim().length > 0);
