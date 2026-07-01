@@ -1,0 +1,89 @@
+{
+  "configVersion": 1,
+  "timestamp": 1782914346045,
+  "index": "/words-games-for-kids/index.html",
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/words-games-for-kids/chunk-BCTzye9I.js",
+        "/words-games-for-kids/chunk-C3uZk5jn.js",
+        "/words-games-for-kids/chunk-YVlRQMGu.js",
+        "/words-games-for-kids/favicon.png",
+        "/words-games-for-kids/index.html",
+        "/words-games-for-kids/main-TPVSZQSR.js",
+        "/words-games-for-kids/manifest.webmanifest",
+        "/words-games-for-kids/polyfills-5CFQRCPP.js",
+        "/words-games-for-kids/styles-C3RRHW6S.css"
+      ],
+      "patterns": []
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "cacheQueryOptions": {
+        "ignoreVary": true
+      },
+      "urls": [
+        "/words-games-for-kids/apple-touch-icon.png",
+        "/words-games-for-kids/icons/icon-1024x1024.png",
+        "/words-games-for-kids/icons/icon-128x128.png",
+        "/words-games-for-kids/icons/icon-144x144.png",
+        "/words-games-for-kids/icons/icon-152x152.png",
+        "/words-games-for-kids/icons/icon-192x192.png",
+        "/words-games-for-kids/icons/icon-384x384.png",
+        "/words-games-for-kids/icons/icon-512x512.png",
+        "/words-games-for-kids/icons/icon-72x72.png",
+        "/words-games-for-kids/icons/icon-96x96.png"
+      ],
+      "patterns": []
+    }
+  ],
+  "dataGroups": [],
+  "hashTable": {
+    "/words-games-for-kids/apple-touch-icon.png": "75ed1ed8dcc9b539ce04e4ef982ea926157e5775",
+    "/words-games-for-kids/chunk-BCTzye9I.js": "8f7d5cf830bae80f3bbd679987cfa36ec887cb12",
+    "/words-games-for-kids/chunk-C3uZk5jn.js": "f63134723dc6656f6e3045e261da1c698d345a96",
+    "/words-games-for-kids/chunk-YVlRQMGu.js": "ec85e58c80133aa8c4d3e1a386d6118f8e442834",
+    "/words-games-for-kids/favicon.png": "ed76fcd7374041a77f5d056de3c03bc9db5a367e",
+    "/words-games-for-kids/icons/icon-1024x1024.png": "c7bb9fcd529276b9a77591f5ad3e2fac0572cb4f",
+    "/words-games-for-kids/icons/icon-128x128.png": "9d617f9c7f0fb67b30781a9007e050492c2efb4a",
+    "/words-games-for-kids/icons/icon-144x144.png": "5d7b976bfcd7b1ca81af7f7a0a91b990ffe394f0",
+    "/words-games-for-kids/icons/icon-152x152.png": "0eebe607e771e363a11c53f34cc1819f4103327e",
+    "/words-games-for-kids/icons/icon-192x192.png": "7e9b1f29433180dcd0071a64d018e1f00cad36c9",
+    "/words-games-for-kids/icons/icon-384x384.png": "5b118d71c2411a3bb644db80c9933c7b64efcf0c",
+    "/words-games-for-kids/icons/icon-512x512.png": "a4aebd9bf8cfba8cff23b7fae0a4706f22b7a0d6",
+    "/words-games-for-kids/icons/icon-72x72.png": "6fa90c720bdce087f10b6afc62efb0edd81dc032",
+    "/words-games-for-kids/icons/icon-96x96.png": "fd8926bccb674c5d1f4b08493ec0d82635789da5",
+    "/words-games-for-kids/index.html": "8971faf21ebddc1d8e9aad4fef7cdd4fc4108b7f",
+    "/words-games-for-kids/main-TPVSZQSR.js": "525611628945586da5c20428d0e18a91ca90a87c",
+    "/words-games-for-kids/manifest.webmanifest": "b7128d922e0fa2cbb8af11dd7752069f4bbdc2a7",
+    "/words-games-for-kids/polyfills-5CFQRCPP.js": "f2241e9a25858f895ce299d15f6f22e849e2fd72",
+    "/words-games-for-kids/styles-C3RRHW6S.css": "1a6492f60cd740fdea706f805217036dca340f7c"
+  },
+  "navigationUrls": [
+    {
+      "positive": true,
+      "regex": "^\\/.*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*\\.[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*$"
+    },
+    {
+      "positive": false,
+      "regex": "^\\/(?:.+\\/)?[^/]*__[^/]*\\/.*$"
+    }
+  ],
+  "navigationRequestStrategy": "performance"
+}
