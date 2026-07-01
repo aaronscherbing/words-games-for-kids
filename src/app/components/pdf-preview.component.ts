@@ -15,9 +15,18 @@ import { IconComponent } from './icon.component';
           <div class="preview-header">
             <h2 class="preview-title">{{ p.title }}</h2>
             <div class="preview-actions">
-              <button class="btn btn-primary btn-sm btn-with-icon" (click)="download()">
-                <app-icon name="download" [size]="16" /> Download
-              </button>
+              @if (canShare) {
+                <button class="btn btn-primary btn-sm btn-with-icon" (click)="share()">
+                  <app-icon name="share" [size]="16" /> Share / Print
+                </button>
+                <button class="btn btn-secondary btn-sm btn-with-icon" (click)="download()">
+                  <app-icon name="download" [size]="16" /> Download
+                </button>
+              } @else {
+                <button class="btn btn-primary btn-sm btn-with-icon" (click)="download()">
+                  <app-icon name="download" [size]="16" /> Download
+                </button>
+              }
               <button class="btn btn-secondary btn-sm btn-with-icon" (click)="close()" aria-label="Close preview">
                 <app-icon name="close" [size]="16" /> Close
               </button>
@@ -117,6 +126,8 @@ export class PdfPreviewComponent {
   preview = inject(PdfPreviewService);
   private sanitizer = inject(DomSanitizer);
 
+  readonly canShare = this.preview.canShare();
+
   safeUrl(url: string) {
     return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
@@ -127,6 +138,10 @@ export class PdfPreviewComponent {
 
   download() {
     this.preview.download();
+  }
+
+  share() {
+    void this.preview.share();
   }
 
   onBackdropClick(event: MouseEvent) {

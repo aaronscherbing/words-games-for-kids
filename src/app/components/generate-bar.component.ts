@@ -79,6 +79,9 @@ type GeneratingKey = 'crossword' | 'matching' | 'flashcards' | null;
   styles: [`
     .generate-bar {
       padding: 14px 24px;
+      /* clear the home indicator / right-edge notch when installed */
+      padding-bottom: calc(14px + env(safe-area-inset-bottom));
+      padding-right: calc(24px + env(safe-area-inset-right));
       background: #fff;
       border-top: 2px solid var(--border);
     }
@@ -141,6 +144,7 @@ type GeneratingKey = 'crossword' | 'matching' | 'flashcards' | null;
     @media (max-width: 768px) {
       .generate-bar {
         padding: 12px 16px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom));
       }
 
       .generate-label {
@@ -196,8 +200,8 @@ export class GenerateBarComponent {
     this.generating.set('crossword');
     setTimeout(() => {
       try {
-        const url = this.pdfService.generateCrossword(ws);
-        if (url) this.preview.show(url, `${ws.name} – Crossword`, `${ws.name}-crossword.pdf`);
+        const res = this.pdfService.generateCrossword(ws);
+        if (res) this.preview.show(res.url, `${ws.name} – Crossword`, `${ws.name}-crossword.pdf`, res.blob);
       } finally {
         this.generating.set(null);
       }
@@ -210,8 +214,8 @@ export class GenerateBarComponent {
     this.generating.set('matching');
     setTimeout(() => {
       try {
-        const url = this.pdfService.generateMatching(ws);
-        if (url) this.preview.show(url, `${ws.name} – Matching`, `${ws.name}-matching.pdf`);
+        const res = this.pdfService.generateMatching(ws);
+        if (res) this.preview.show(res.url, `${ws.name} – Matching`, `${ws.name}-matching.pdf`, res.blob);
       } finally {
         this.generating.set(null);
       }
@@ -224,8 +228,8 @@ export class GenerateBarComponent {
     this.generating.set('flashcards');
     setTimeout(() => {
       try {
-        const url = this.pdfService.generateFlashCards(ws);
-        if (url) this.preview.show(url, `${ws.name} – Flash Cards`, `${ws.name}-flashcards.pdf`);
+        const res = this.pdfService.generateFlashCards(ws);
+        if (res) this.preview.show(res.url, `${ws.name} – Flash Cards`, `${ws.name}-flashcards.pdf`, res.blob);
       } finally {
         this.generating.set(null);
       }

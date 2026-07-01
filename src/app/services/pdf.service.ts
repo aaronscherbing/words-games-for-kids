@@ -10,13 +10,18 @@ const DARK = '#3c3c3c';
 const GRAY = '#afafaf';
 const SPACE_FILL = '#d9d9d9';
 
+export interface PdfResult {
+  url: string;
+  blob: Blob;
+}
+
 @Injectable({ providedIn: 'root' })
 export class PdfService {
   constructor(private cw: CrosswordGeneratorService) {}
 
   // ─── CROSSWORD ─────────────────────────────────────────────────────────────
 
-  generateCrossword(ws: WordSet): string | null {
+  generateCrossword(ws: WordSet): PdfResult | null {
     const result = this.cw.generate(ws.entries);
     if (result.rows === 0) return null;
 
@@ -24,7 +29,7 @@ export class PdfService {
     this.drawCrosswordPage(doc, ws.name, result, false);
     doc.addPage();
     this.drawCrosswordPage(doc, ws.name + ' – Answer Key', result, true);
-    return this.toBlobUrl(doc);
+    return this.toResult(doc);
   }
 
   private drawCrosswordPage(
@@ -148,7 +153,7 @@ export class PdfService {
 
   // ─── MATCHING ──────────────────────────────────────────────────────────────
 
-  generateMatching(ws: WordSet): string | null {
+  generateMatching(ws: WordSet): PdfResult | null {
     const valid = ws.entries.filter(
       (e) => e.word.trim().length > 0 && e.clue.trim().length > 0
     );
@@ -162,7 +167,7 @@ export class PdfService {
     this.drawMatchingPage(doc, ws.name, valid, shuffledClues, shuffledWords, false);
     doc.addPage();
     this.drawMatchingPage(doc, ws.name + ' – Answer Key', valid, shuffledClues, shuffledWords, true);
-    return this.toBlobUrl(doc);
+    return this.toResult(doc);
   }
 
   private drawMatchingPage(
@@ -264,7 +269,7 @@ export class PdfService {
 
   // ─── FLASH CARDS ───────────────────────────────────────────────────────────
 
-  generateFlashCards(ws: WordSet): string | null {
+  generateFlashCards(ws: WordSet): PdfResult | null {
     const valid = ws.entries.filter(
       (e) => e.word.trim().length > 0 && e.clue.trim().length > 0
     );
@@ -290,7 +295,7 @@ export class PdfService {
       this.drawCardPage(doc, batch, cols, rows, cardW, cardH, margin, 'back');
     });
 
-    return this.toBlobUrl(doc);
+    return this.toResult(doc);
   }
 
   private drawCardPage(
@@ -399,9 +404,9 @@ export class PdfService {
 
   // ─── Utilities ─────────────────────────────────────────────────────────────
 
-  private toBlobUrl(doc: jsPDF): string {
+  private toResult(doc: jsPDF): PdfResult {
     const blob = doc.output('blob');
-    return URL.createObjectURL(blob);
+    return { url: URL.createObjectURL(blob), blob };
   }
 
   private shuffle<T>(arr: T[]): T[] {

@@ -58,6 +58,7 @@ import { IconComponent } from './components/icon.component';
     .app-shell {
       display: flex;
       height: 100vh;
+      height: 100dvh; /* correct height on iOS/iPadOS standalone */
       overflow: hidden;
     }
 
@@ -131,6 +132,10 @@ import { IconComponent } from './components/icon.component';
         align-items: center;
         gap: 12px;
         padding: 10px 16px;
+        /* Clear the status bar / notch when installed to the home screen */
+        padding-top: calc(10px + env(safe-area-inset-top));
+        padding-left: calc(16px + env(safe-area-inset-left));
+        padding-right: calc(16px + env(safe-area-inset-right));
         background: #fff;
         border-bottom: 2px solid var(--border);
         flex-shrink: 0;

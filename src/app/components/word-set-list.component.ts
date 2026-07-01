@@ -107,6 +107,9 @@ import { IconComponent } from './icon.component';
       width: 260px;
       min-width: 220px;
       height: 100vh;
+      height: 100dvh;
+      /* keep contents clear of a landscape notch on the left edge */
+      padding-left: env(safe-area-inset-left);
       background: #fff;
       border-right: 2px solid var(--border);
       overflow: hidden;
@@ -114,6 +117,8 @@ import { IconComponent } from './icon.component';
 
     .sidebar-header {
       padding: 16px 12px 12px 16px;
+      /* clear the status bar when installed to the home screen */
+      padding-top: calc(16px + env(safe-area-inset-top));
       border-bottom: 2px solid var(--border);
       display: flex;
       align-items: center;
@@ -245,9 +250,23 @@ import { IconComponent } from './icon.component';
 
     .sidebar-footer {
       padding: 12px 16px;
+      padding-bottom: calc(12px + env(safe-area-inset-bottom));
       border-top: 2px solid var(--border);
       display: flex;
       gap: 8px;
+    }
+
+    /* On touch devices there is no hover, so the per-set actions
+       (rename / export / delete) must stay visible to be usable. */
+    @media (pointer: coarse) {
+      .set-item-actions {
+        opacity: 1;
+      }
+
+      .btn-icon {
+        width: 40px;
+        height: 40px;
+      }
     }
   `],
 })

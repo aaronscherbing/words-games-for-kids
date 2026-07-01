@@ -143,6 +143,9 @@ import { IconComponent } from './icon.component';
 
     .editor-header {
       padding: 20px 24px 14px;
+      /* clear the status bar when installed to the home screen (two-column layout);
+         the mobile override below resets this since the mobile header handles it */
+      padding-top: calc(20px + env(safe-area-inset-top));
       border-bottom: 2px solid var(--border);
     }
 
